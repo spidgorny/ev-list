@@ -6,8 +6,6 @@ const template = require('art-template');
 @Controller('')
 export class HomeController extends ApiController {
 
-
-
 	@HttpGet('/')
 	@SendsResponse()
 	get(): void {

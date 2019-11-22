@@ -1,18 +1,15 @@
-const GoogleSpreadsheet = require('google-spreadsheet');
+import GoogleSpreadsheet from "google-spreadsheet";
 
-export function GoogleSpreadsheetService({
-											   sensitive,
-											   logger
-										   }) {
+export function GoogleSpreadsheetService(spreadsheetId: string,
+										 sensitive?: any,
+										 logger?: any) {
 	let retr: any = {};
-
-	const spreadsheetId = process.env.spreadsheetId || sensitive.dataStore.googleSpreadsheet;
 
 	const googleDoc = new GoogleSpreadsheet(spreadsheetId);
 
 	retr.setupConnection = () => {
 		return new Promise((resolve, reject) => {
-			googleDoc.useServiceAccountAuth(sensitive.google, function (connErr) {
+			googleDoc.useServiceAccountAuth(sensitive.google, (connErr: any) => {
 				if (connErr) {
 					logger.error(`[${new Date().getTime()}]: GoogleSpreadsheetService:: Failed to connect to spreadsheet. spreadsheetId: ${spreadsheetId}`);
 					reject(connErr);
@@ -25,7 +22,7 @@ export function GoogleSpreadsheetService({
 
 	retr.getInfo = () => {
 		return new Promise((resolve, reject) => {
-			const getInfoCb = (err, spreadsheetInfo) => {
+			const getInfoCb = (err: any, spreadsheetInfo: any) => {
 				if (err) {
 					reject(err);
 					return;
@@ -38,19 +35,19 @@ export function GoogleSpreadsheetService({
 		});
 	};
 
-	retr.getSheetByName = (sheetName) => {
+	retr.getSheetByName = (sheetName: string) => {
 		return new Promise((resolve, reject) => {
 			if (!sheetName) {
 				reject("No name provided");
 			}
 
-			const getInfoCb = (err, spreadsheetInfo) => {
+			const getInfoCb = (err: any, spreadsheetInfo: any) => {
 				if (err) {
 					reject(err);
 					return;
 				}
 
-				spreadsheetInfo.worksheets.forEach((worksheet) => {
+				spreadsheetInfo.worksheets.forEach((worksheet: any) => {
 					if (worksheet.title === sheetName) {
 						resolve({...worksheet});
 					}
@@ -62,20 +59,20 @@ export function GoogleSpreadsheetService({
 		});
 	};
 
-	retr.addSheet = (sheetName) => {
+	retr.addSheet = (sheetName: any) => {
 		return new Promise((resolve, reject) => {
 			if (!sheetName) {
 				reject({error: "No name provided", errorCode: 1});
 			}
 
-			retr.getSheetByName(sheetName).then((sheet) => {
+			retr.getSheetByName(sheetName).then((sheet: any) => {
 				resolve({
 					error: "Sheet with that name already exists.",
 					errorCode: 2,
 					sheet
 				});
 			}).catch(() => {
-				const addSheetCb = (err, spreadsheetInfo) => {
+				const addSheetCb = (err: any, spreadsheetInfo: any) => {
 					if (err) {
 						reject({
 							error: "Unable to add sheet",
@@ -101,13 +98,13 @@ export function GoogleSpreadsheetService({
 		});
 	};
 
-	retr.addRow = (sheetId, data) => {
+	retr.addRow = (sheetId: any, data: any) => {
 		return new Promise((resolve, reject) => {
 			if (!sheetId) {
 				reject("No sheet id provided");
 			}
 
-			const addRowCb = (err, spreadsheetRow) => {
+			const addRowCb = (err: any, spreadsheetRow: any) => {
 				if (err) {
 					reject(err);
 					return;
@@ -119,9 +116,9 @@ export function GoogleSpreadsheetService({
 		});
 	};
 
-	retr.getRows = (sheet, options) => {
+	retr.getRows = (sheet: any, options: any) => {
 		return new Promise((resolve, reject) => {
-			const addRowCb = (err, rows) => {
+			const addRowCb = (err: any, rows: any) => {
 				if (err) {
 					reject(err);
 					return;

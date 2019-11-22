@@ -1,4 +1,4 @@
-import {GoogleSpreadsheetService} from "./src/promise-spreadsheet";
+import {GoogleSpreadsheetService} from "./public/src/promise-spreadsheet";
 
 // spreadsheet key is the long id in the sheets URL
 const doc = GoogleSpreadsheetService({
