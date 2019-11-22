@@ -1,13 +1,7 @@
-import {GoogleSpreadsheetService} from "./public/src/promise-spreadsheet";
+import {GoogleSpreadsheetService} from "./src/promise-spreadsheet";
 
 // spreadsheet key is the long id in the sheets URL
-const doc = GoogleSpreadsheetService({
-	sensitive: {
-		dataStore: {
-			googleSpreadsheet: '1r2tPnsrYuJP_2W7qIqdsLg_A08GvCjKbVBJJb3UnXMw'
-		}
-	}, logger: null
-});
+const doc = GoogleSpreadsheetService('1r2tPnsrYuJP_2W7qIqdsLg_A08GvCjKbVBJJb3UnXMw');
 let sheet;
 
 (async () => {

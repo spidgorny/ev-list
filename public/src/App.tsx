@@ -1,43 +1,47 @@
 import React from 'react';
 import './App.css';
-import {GoogleSpreadsheetService} from "./promise-spreadsheet";
+const axios = require('axios').default;
+import { useTable } from 'react-table';
 
 export default class App extends React.Component<any, any> {
 
 	state = {
-		doc: null,
+		sheet: null,
 	};
 
 	constructor(props: any) {
 		super(props);
-		this.fetchData().then(this.processData.bind(this));
+		this.fetchData();
 	}
 
 	async fetchData() {
-		const doc = GoogleSpreadsheetService('1r2tPnsrYuJP_2W7qIqdsLg_A08GvCjKbVBJJb3UnXMw');
-		// this.setState((state: any) => ({
-		// 	...state,
-		// 	doc,
-		// }));
-		this.state.doc = doc;
-	}
-
-	async processData() {
-		if (!this.state.doc) {
-			return;
-		}
-		const doc = this.state.doc as any;
-		const info = await doc.getInfo();
-		console.log(info);
-		console.log('Loaded doc: ' + info.title + ' by ' + info.author.email);
-		const sheet = info.worksheets[0];
-		console.log('sheet 1: ' + sheet.title + ' ' + sheet.rowCount + 'x' + sheet.colCount);
+		const result = await axios.get('http://localhost:8088/sheet');
+		console.log(result);
+		const sheet = result.data;
+		this.setState((state: any) => ({
+			...state,
+			sheet,
+		}));
 	}
 
 	render() {
+		const {
+			getTableProps,
+			getTableBodyProps,
+			headerGroups,
+			rows,
+			prepareRow,
+		} = useTable({
+			columns: [
+				'type'
+			],
+			data: this.state.sheet,
+		});
+
 		return (
 			<div className="App">
-              { this.state.doc ? 'doc' : 'no doc' }
+              { this.state.sheet ? 'doc' : 'no doc' }
+				<table {...getTableProps()}/>
 			</div>
 		);
 	}
