@@ -42,7 +42,7 @@ export class HomeController extends ApiController {
 
 		const rows = await doc.getRows(sheet, {
 			offset: 1,
-			limit: 20,
+			limit: 100,
 		});
 
 		console.log(rows.length);
