@@ -2,7 +2,8 @@ import React from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Table from "react-bootstrap/Table";
-import { Sheet } from './Sheet';
+import {Sheet} from './Sheet';
+import {CarRow} from "./CarRow";
 
 const axios = require('axios').default;
 
@@ -15,7 +16,12 @@ export default class App extends React.Component<any, IAppState> {
 
 	constructor(props: any) {
 		super(props);
-		this.fetchData().then(r => {});
+		this.fetchData().then(r => {
+			this.setState((state) => ({
+				...state,
+				sortBy: localStorage.getItem('sortBy'),
+			}));
+		});
 	}
 
 	async fetchData() {
@@ -27,6 +33,10 @@ export default class App extends React.Component<any, IAppState> {
 			...state,
 			sheet,
 		}));
+	}
+
+	isNumeric(n: string) {
+		return !isNaN(parseFloat(n)) && isFinite(parseInt(n, 10));
 	}
 
 	render() {
@@ -44,6 +54,11 @@ export default class App extends React.Component<any, IAppState> {
 				let v1 = a[this.state.sortBy] as string;
 				// @ts-ignore
 				let v2 = b[this.state.sortBy] as string;
+				if (this.isNumeric(v1[0]) && this.isNumeric(v2[0])) {
+					const i1 = parseFloat(v1);
+					const i2 = parseFloat(v2);
+					return i1 - i2;
+				}
 				return v1.localeCompare(v2);
 			});
 		}
@@ -53,25 +68,20 @@ export default class App extends React.Component<any, IAppState> {
 				<Table striped bordered hover className="tableFixHead">
 					<thead>
 					<tr>
+						<th></th>
 						<th onClick={this.sortBy.bind(this, 'automarke')}>Brand</th>
 						<th onClick={this.sortBy.bind(this, 'automodell')}>Make</th>
 						<th onClick={this.sortBy.bind(this, 'batterie-kapazität')}>Battery</th>
 						<th onClick={this.sortBy.bind(this, 'gesamt-reichweiteelektrisch')}>Range</th>
 						<th onClick={this.sortBy.bind(this, 'lade-leistung')}>Charging with</th>
+						<th onClick={this.sortBy.bind(this, 'kw100km')}>Efficiency</th>
+						<th onClick={this.sortBy.bind(this, 'stecker-typ')}>Charging port</th>
 					</tr>
 					</thead>
 					<tbody>
 					{rows.map((row: Sheet.Row) => {
-							return (
-								<tr key={row.id}>
-									<td>{row.automarke}</td>
-									<td>{row.automodell}</td>
-									<td>{row['batterie-kapazität']}</td>
-									<td>{row['gesamt-reichweiteelektrisch']}</td>
-									<td>{row['lade-leistung']}</td>
-								</tr>);
-						}
-					)}
+						return <CarRow data={row} key={row.id}/>;
+					})}
 					</tbody>
 				</Table>
 			</div>
@@ -83,5 +93,6 @@ export default class App extends React.Component<any, IAppState> {
 			...state,
 			sortBy: column,
 		}));
+		localStorage.setItem('sortBy', column);
 	}
 }
